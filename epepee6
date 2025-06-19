@@ -27,7 +27,17 @@ main.AnchorPoint = Vector2.new(0.5, 0.5)
 main.BackgroundColor3 = Color3.fromRGB(135, 206, 235) -- Sky Blue
 main.BorderSizePixel = 0
 main.Active = true
+main.Selectable = true
+main.Draggable = true
 main.Parent = gui
+
+local gradient = Instance.new("UIGradient")
+gradient.Color = ColorSequence.new{
+    ColorSequenceKeypoint.new(0, Color3.fromRGB(135, 206, 250)),
+    ColorSequenceKeypoint.new(1, Color3.fromRGB(0, 191, 255))
+}
+gradient.Rotation = 90
+gradient.Parent = main
 
 local corner = Instance.new("UICorner")
 corner.CornerRadius = UDim.new(0, 10)
@@ -104,26 +114,6 @@ content.Position = UDim2.new(0, 20, 0, 80)
 content.BackgroundTransparency = 1
 content.Name = "Content"
 content.Parent = main
-
--- Minimize logic
-local minimized = false
-local originalSize = main.Size
-minimizeBtn.MouseButton1Click:Connect(function()
-    minimized = not minimized
-    if minimized then
-        main.Size = UDim2.new(0, 320, 0, 50)
-        tabBar.Visible = false
-        content.Visible = false
-    else
-        main.Size = originalSize
-        tabBar.Visible = true
-        content.Visible = true
-        for _, f in pairs(tabFrames) do
-            f.Visible = false
-        end
-        petTab.Visible = true
-    end
-end)
 
 -- INPUT FIELD CREATOR
 local function createInput(placeholder)
@@ -219,16 +209,18 @@ end
 local petTab = createTab("Pet")
 local petInput = createInput("Pet Name")
 petInput.Parent = petTab
-local ageInput = createInput("Weight")
-ageInput.Parent = petTab
-local weightInput = createInput("Age")
+local weightInput = createInput("Weight")
 weightInput.Parent = petTab
+local ageInput = createInput("Age")
+ageInput.Parent = petTab
 local petButton = createButton("Spawn", function()
     if petInput.Text ~= "" and ageInput.Text ~= "" and weightInput.Text ~= "" then
         local age = tonumber(ageInput.Text)
         local weight = tonumber(weightInput.Text)
         if age and weight then
             Spawner.SpawnPet(petInput.Text, age, weight)
+        else
+            warn("Age and weight must be numbers.")
         end
     end
 end)
@@ -266,6 +258,24 @@ local spinButton = createButton("Spin", function()
     end
 end)
 spinButton.Parent = spinTab
+
+-- Minimize logic
+local minimized = false
+local originalSize = main.Size
+minimizeBtn.MouseButton1Click:Connect(function()
+    minimized = not minimized
+    if minimized then
+        main.Size = UDim2.new(0, 320, 0, 50)
+        tabBar.Visible = false
+        content.Visible = false
+    else
+        main.Size = originalSize
+        tabBar.Visible = true
+        content.Visible = true
+        for _, f in pairs(tabFrames) do f.Visible = false end
+        tabFrames["Pet"].Visible = true
+    end
+end)
 
 -- Show default tab
 petTab.Visible = true
