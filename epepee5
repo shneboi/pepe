@@ -219,9 +219,9 @@ end
 local petTab = createTab("Pet")
 local petInput = createInput("Pet Name")
 petInput.Parent = petTab
-local ageInput = createInput("Age")
+local ageInput = createInput("Weight")
 ageInput.Parent = petTab
-local weightInput = createInput("Weight")
+local weightInput = createInput("Age")
 weightInput.Parent = petTab
 local petButton = createButton("Spawn", function()
     if petInput.Text ~= "" and ageInput.Text ~= "" and weightInput.Text ~= "" then
