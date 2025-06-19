@@ -21,7 +21,7 @@ gui.Parent = Players.LocalPlayer:WaitForChild("PlayerGui")
 
 -- Main Frame
 local main = Instance.new("Frame")
-main.Size = UDim2.new(0, 320, 0, 290)
+main.Size = UDim2.new(0, 350, 0, 290)
 main.Position = UDim2.new(0.5, 0, 0.5, 0)
 main.AnchorPoint = Vector2.new(0.5, 0.5)
 main.BackgroundColor3 = Color3.fromRGB(135, 206, 235)
@@ -71,9 +71,7 @@ exitBtn.TextColor3 = Color3.fromRGB(0, 0, 0)
 exitBtn.Font = Enum.Font.GothamBold
 exitBtn.TextSize = 14
 exitBtn.Parent = main
-local exitCorner = Instance.new("UICorner")
-exitCorner.CornerRadius = UDim.new(0, 6)
-exitCorner.Parent = exitBtn
+Instance.new("UICorner", exitBtn).CornerRadius = UDim.new(0, 6)
 
 exitBtn.MouseButton1Click:Connect(function()
     gui:Destroy()
@@ -89,11 +87,9 @@ minimizeBtn.TextColor3 = Color3.fromRGB(0, 0, 0)
 minimizeBtn.Font = Enum.Font.GothamBold
 minimizeBtn.TextSize = 18
 minimizeBtn.Parent = main
-local minimizeCorner = Instance.new("UICorner")
-minimizeCorner.CornerRadius = UDim.new(0, 6)
-minimizeCorner.Parent = minimizeBtn
+Instance.new("UICorner", minimizeBtn).CornerRadius = UDim.new(0, 6)
 
--- Tab Buttons
+-- Tab Bar
 local tabBar = Instance.new("Frame")
 tabBar.Size = UDim2.new(1, -20, 0, 30)
 tabBar.Position = UDim2.new(0, 10, 0, 45)
@@ -115,32 +111,22 @@ content.BackgroundTransparency = 1
 content.Name = "Content"
 content.Parent = main
 
--- Icon assets for each tab
-local tabIcons = {
-    Pet = "rbxassetid://6031075930",  -- 🐶
-    Seed = "rbxassetid://6023426926", -- 🌱
-    Egg = "rbxassetid://6031094678",  -- 🥚
-    Spin = "rbxassetid://6031265976"  -- 🎡
-}
-
--- Input Field Creator
+-- INPUT FIELD CREATOR (vibrant color)
 local function createInput(placeholder)
     local box = Instance.new("TextBox")
     box.Size = UDim2.new(0, 220, 0, 36)
     box.PlaceholderText = placeholder
     box.Text = ""
-    box.BackgroundColor3 = Color3.fromRGB(255, 255, 153) -- Bright pastel yellow
+    box.BackgroundColor3 = Color3.fromRGB(255, 255, 153) -- vibrant yellow
     box.TextColor3 = Color3.fromRGB(0, 0, 0)
     box.Font = Enum.Font.Gotham
     box.TextSize = 16
     box.ClearTextOnFocus = false
 
-    local corner = Instance.new("UICorner")
-    corner.CornerRadius = UDim.new(0, 8)
-    corner.Parent = box
+    Instance.new("UICorner", box).CornerRadius = UDim.new(0, 8)
 
     local stroke = Instance.new("UIStroke")
-    stroke.Color = Color3.fromRGB(255, 165, 0) -- Orange border
+    stroke.Color = Color3.fromRGB(255, 165, 0)
     stroke.Thickness = 2
     stroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
     stroke.Parent = box
@@ -148,7 +134,7 @@ local function createInput(placeholder)
     return box
 end
 
--- Button Creator
+-- BUTTON CREATOR
 local function createButton(text, callback)
     local btn = Instance.new("TextButton")
     btn.Size = UDim2.new(0, 220, 0, 36)
@@ -160,9 +146,7 @@ local function createButton(text, callback)
     btn.AutoButtonColor = false
     btn.Active = true
 
-    local corner = Instance.new("UICorner")
-    corner.CornerRadius = UDim.new(0, 8)
-    corner.Parent = btn
+    Instance.new("UICorner", btn).CornerRadius = UDim.new(0, 8)
 
     local stroke = Instance.new("UIStroke")
     stroke.Color = Color3.fromRGB(60, 60, 60)
@@ -174,13 +158,20 @@ local function createButton(text, callback)
     return btn
 end
 
--- Tab Management
+-- TAB CREATOR
 local tabFrames = {}
 
 local function createTab(name)
+    local emojiMap = {
+        Pet = "🐾",
+        Seed = "🌱",
+        Egg = "🥚",
+        Spin = "🎡"
+    }
+
     local button = Instance.new("TextButton")
     button.Size = UDim2.new(0, 90, 1, 0)
-    button.Text = "  " .. name
+    button.Text = (emojiMap[name] or "") .. "  " .. name
     button.BackgroundColor3 = Color3.fromRGB(124, 252, 0)
     button.TextColor3 = Color3.fromRGB(0, 0, 0)
     button.Font = Enum.Font.GothamSemibold
@@ -188,19 +179,7 @@ local function createTab(name)
     button.AutoButtonColor = true
     button.Parent = tabBar
 
-    local corner = Instance.new("UICorner")
-    corner.CornerRadius = UDim.new(0, 6)
-    corner.Parent = button
-
-    if tabIcons[name] then
-        local icon = Instance.new("ImageLabel")
-        icon.Size = UDim2.new(0, 16, 0, 16)
-        icon.Position = UDim2.new(0, 6, 0.5, -8)
-        icon.BackgroundTransparency = 1
-        icon.Image = tabIcons[name]
-        icon.ZIndex = 2
-        icon.Parent = button
-    end
+    Instance.new("UICorner", button).CornerRadius = UDim.new(0, 6)
 
     local frame = Instance.new("Frame")
     frame.Size = UDim2.new(1, 0, 1, 0)
@@ -223,61 +202,53 @@ local function createTab(name)
     return frame
 end
 
--- Pet Tab
+-- PET TAB
 local petTab = createTab("Pet")
-local petInput = createInput("Pet Name")
-petInput.Parent = petTab
-local weightInput = createInput("Age")
-weightInput.Parent = petTab
-local ageInput = createInput("Weight")
-ageInput.Parent = petTab
-local petButton = createButton("Spawn", function()
-    if petInput.Text ~= "" and ageInput.Text ~= "" and weightInput.Text ~= "" then
-        local age = tonumber(ageInput.Text)
-        local weight = tonumber(weightInput.Text)
-        if age and weight then
-            Spawner.SpawnPet(petInput.Text, age, weight)
-        else
-            warn("Age and weight must be numbers.")
-        end
+createInput("Pet Name").Parent = petTab
+createInput("Age").Parent = petTab
+createInput("Weight").Parent = petTab
+createButton("Spawn", function()
+    local name = petTab:GetChildren()[2].Text
+    local age = tonumber(petTab:GetChildren()[3].Text)
+    local weight = tonumber(petTab:GetChildren()[4].Text)
+    if name ~= "" and age and weight then
+        Spawner.SpawnPet(name, age, weight)
+    else
+        warn("Please fill all fields with valid data.")
     end
-end)
-petButton.Parent = petTab
+end).Parent = petTab
 
--- Seed Tab
+-- SEED TAB
 local seedTab = createTab("Seed")
 local seedInput = createInput("Seed Name")
 seedInput.Parent = seedTab
-local seedButton = createButton("Spawn", function()
+createButton("Spawn", function()
     if seedInput.Text ~= "" then
         Spawner.SpawnSeed(seedInput.Text)
     end
-end)
-seedButton.Parent = seedTab
+end).Parent = seedTab
 
--- Egg Tab
+-- EGG TAB
 local eggTab = createTab("Egg")
 local eggInput = createInput("Egg Name")
 eggInput.Parent = eggTab
-local eggButton = createButton("Spawn", function()
+createButton("Spawn", function()
     if eggInput.Text ~= "" then
         Spawner.SpawnEgg(eggInput.Text)
     end
-end)
-eggButton.Parent = eggTab
+end).Parent = eggTab
 
--- Spin Tab
+-- SPIN TAB
 local spinTab = createTab("Spin")
 local spinInput = createInput("Seed Name to Spin")
 spinInput.Parent = spinTab
-local spinButton = createButton("Spin", function()
+createButton("Spin", function()
     if spinInput.Text ~= "" then
         Spawner.Spin(spinInput.Text)
     end
-end)
-spinButton.Parent = spinTab
+end).Parent = spinTab
 
--- Minimize Logic
+-- Minimize logic
 local minimized = false
 local originalSize = main.Size
 minimizeBtn.MouseButton1Click:Connect(function()
