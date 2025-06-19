@@ -268,3 +268,5 @@ end)
 
 -- Show default tab
 petTab.Visible = true
+
+getgenv().Executed = nil
